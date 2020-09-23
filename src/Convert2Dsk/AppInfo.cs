@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2020 Jon Thysell <http://jonthysell.com>
 // Licensed under the MIT License.
 
+using System;
 using System.Reflection;
 
 namespace Convert2Dsk
@@ -13,7 +14,18 @@ namespace Convert2Dsk
         public static string Name => _name ??= Assembly.GetName().Name;
         private static string _name = null;
 
-        public static string Version => _version ??= Assembly.GetName().Version.ToString();
+        public static string Version
+        {
+            get
+            {
+                if (null == _version)
+                {
+                    Version vers = Assembly.GetName().Version;
+                    _version = vers.Build == 0 ? $"{vers.Major}.{vers.Minor}" : $"{vers.Major}.{vers.Minor}.{vers.Build}";
+                }
+                return _version;
+            }
+        }
         private static string _version = null;
     }
 }
