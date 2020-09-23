@@ -33,7 +33,7 @@ The Linux release is a self-contained x64 binary and runs on many Linux distribu
 1. Download the latest Linux tar.gz file (Convert2Dsk.Linux.tar.gz) from https://github.com/jonthysell/Convert2Dsk/releases/latest
 2. Extract the tar.gz file
 
-### Usage ###
+## Usage ##
 
 ```none
 Usage: convert2dsk [--version] [--help]
