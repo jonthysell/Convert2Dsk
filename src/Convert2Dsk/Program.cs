@@ -16,6 +16,8 @@ namespace Convert2Dsk
         {
             Console.OutputEncoding = Encoding.UTF8;
 
+            Logger.LogWrite += Console.Write;
+
             var p = new Program(args);
             p.Run();
         }
@@ -80,6 +82,8 @@ namespace Convert2Dsk
             {
                 ProgramArgs = ProgramArgs.ParseArgs(Arguments);
 
+                Logger.VerboseEnabled = ProgramArgs.Verbose;
+
                 if (ProgramArgs.ShowVersion)
                 {
                     ShowVersion();
@@ -91,32 +95,30 @@ namespace Convert2Dsk
                     return;
                 }
 
-                VerboseWriteLine($"Searching for potential files...");
+                Logger.VerboseWriteLine("Searching for potential files...");
 
                 var filePaths = FindAllUniqueFilePaths(ProgramArgs.Paths);
 
-                VerboseWriteLine($"Found {filePaths.Count} potential file(s).");
+                Logger.VerboseWriteLine($"Found {filePaths.Count} potential file(s).");
 
                 if (filePaths.Count > 0)
                 {
-                    VerboseWriteLine($"Converting file(s)...");
+                    Logger.VerboseWriteLine("Converting file(s)...");
                     foreach (var filePath in filePaths)
                     {
                         ConvertFile(filePath);
                     }
-                    VerboseWriteLine($"Conversion(s) complete.");
+                    Logger.VerboseWriteLine("Conversion(s) complete.");
                 }
             }
             catch (ParseArgumentsException ex)
             {
                 PrintException(ex);
-                Console.WriteLine();
                 ShowHelp();
             }
             catch (Exception ex)
             {
                 PrintException(ex);
-                Console.WriteLine();
             }
         }
 
@@ -152,7 +154,7 @@ namespace Convert2Dsk
             {
                 // Adapted from https://www.bigmessowires.com/2013/12/16/macintosh-diskcopy-4-2-floppy-image-converter/
 
-                Console.Write($"Converting \"{filePath}\"...");
+                Logger.Write($"Converting \"{filePath}\"...");
 
                 using FileStream inputFileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
                 using BinaryReader binaryReader = new BinaryReader(inputFileStream);
@@ -191,20 +193,12 @@ namespace Convert2Dsk
                 binaryWriter.Write(imageData);
                 binaryWriter.Flush();
 
-                Console.WriteLine($" success!");
+                Logger.WriteLine($" success!");
             }
             catch (Exception ex)
             {
-                Console.WriteLine($" failed.");
+                Logger.WriteLine($" failed.");
                 PrintException(ex);
-            }
-        }
-
-        private void VerboseWriteLine(string message)
-        {
-            if (ProgramArgs.Verbose)
-            {
-                Console.WriteLine(message);
             }
         }
 
@@ -212,8 +206,7 @@ namespace Convert2Dsk
 
         private void ShowVersion()
         {
-            Console.WriteLine($"{ AppInfo.Name } v{ AppInfo.Version }");
-            Console.WriteLine();
+            Logger.WriteLine($"{ AppInfo.Name } v{ AppInfo.Version }");
         }
 
         #endregion
@@ -222,16 +215,15 @@ namespace Convert2Dsk
 
         private void ShowHelp()
         {
-            Console.WriteLine("Usage: convert2dsk [--version] [--help]");
-            Console.WriteLine("                   [options...] <paths...>");
-            Console.WriteLine();
+            Logger.WriteLine("Usage: convert2dsk [--version] [--help]");
+            Logger.WriteLine("                   [options...] <paths...>");
+            Logger.WriteLine();
 
-            Console.WriteLine("Paths can be files or directories of files.");
-            Console.WriteLine();
+            Logger.WriteLine("Paths can be files or directories of files.");
+            Logger.WriteLine();
 
-            Console.WriteLine("Options:");
-            Console.WriteLine("-v, --verbose  Show verbose output");
-            Console.WriteLine();
+            Logger.WriteLine("Options:");
+            Logger.WriteLine("-v, --verbose  Show verbose output");
         }
 
         #endregion
