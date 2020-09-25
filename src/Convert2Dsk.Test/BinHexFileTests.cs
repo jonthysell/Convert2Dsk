@@ -9,31 +9,33 @@ namespace Convert2Dsk.Test
 {
     [TestClass]
     [DeploymentItem("TestAssets")]
-    public class DiskCopyImageTests
+    public class BinHexFileTests
     {
         [TestMethod]
-        public void DiskCopyImage_Blank1440KTest()
+        public void BinHexFile_Blank1440KTest()
         {
-            var testCase = new DiskCopyImageTestCase("Blank1440K.img", "Blank1440K.dsk");
+            var testCase = new BinHexFileTestCase("Blank1440K.img.hqx", "Blank1440K.dsk");
             testCase.ExecuteTest();
         }
 
         [TestMethod]
-        public void DiskCopyImage_Blank800KTest()
+        public void BinHexFile_Blank800KTest()
         {
-            var testCase = new DiskCopyImageTestCase("Blank800K.img", "Blank800K.dsk");
+            var testCase = new BinHexFileTestCase("Blank800K.img.hqx", "Blank800K.dsk");
             testCase.ExecuteTest();
         }
 
-        public class DiskCopyImageTestCase : FileTestCase
+        public class BinHexFileTestCase : FileTestCase
         {
-            public DiskCopyImageTestCase(string inputFilePath, string expectedOutputFilePath) : base(inputFilePath, expectedOutputFilePath) { }
+            public BinHexFileTestCase(string inputFilePath, string expectedOutputFilePath) : base(inputFilePath, expectedOutputFilePath) { }
 
             public override void ExecuteTest()
             {
                 using FileStream inputFileStream = new FileStream(InputFilePath, FileMode.Open, FileAccess.Read);
 
-                byte[] actualOutputBytes = DiskCopyImage.ReadFrom(inputFileStream).Data;
+                byte[] binhexBytes = BinHexFile.ReadFrom(inputFileStream).Data;
+
+                byte[] actualOutputBytes = DiskCopyImage.ReadFrom(binhexBytes).Data;
 
                 byte[] expectedOutputBytes = File.ReadAllBytes(ExpectedOutputFilePath);
 

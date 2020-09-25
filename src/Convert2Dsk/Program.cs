@@ -171,7 +171,7 @@ namespace Convert2Dsk
                 using FileStream outputFileStream = new FileStream(outputFilePath, FileMode.Create, FileAccess.Write, FileShare.ReadWrite);
                 using BinaryWriter binaryWriter = new BinaryWriter(outputFileStream);
 
-                binaryWriter.Write(diskCopyImage.ImageData);
+                binaryWriter.Write(diskCopyImage.Data);
                 binaryWriter.Flush();
 
                 Logger.WriteLine($" success!");

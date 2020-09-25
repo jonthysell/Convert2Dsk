@@ -10,21 +10,40 @@ namespace Convert2Dsk
     {
         public byte[] Header { get; protected set; }
 
-        public byte[] ImageData { get; protected set; }
+        public byte[] Data { get; protected set; }
 
         protected DiskCopyImage() { }
 
         public static DiskCopyImage ReadFrom(Stream inputStream)
         {
+            if (null == inputStream)
+            {
+                throw new ArgumentNullException(nameof(inputStream));
+            }
+
             using BinaryReader binaryReader = new BinaryReader(inputStream);
 
+            byte[] rawData = binaryReader.ReadBytes((int)inputStream.Length);
+
+            return ReadFrom(rawData);
+        }
+
+        public static DiskCopyImage ReadFrom(byte[] rawData)
+        {
+            if (null == rawData)
+            {
+                throw new ArgumentNullException(nameof(rawData));
+            }
+
             // ensure the file is at least 400K, and has the DiskCopy 4.2 magic bytes
-            if (inputStream.Length < 400 * 1024)
+            if (rawData.Length < 400 * 1024)
             {
                 throw new Exception("The file is too small to be a DiskCopy 4.2 image.");
             }
 
-            byte[] header = binaryReader.ReadBytes(HeaderSizeInBytes);
+            byte[] header = new byte[HeaderSizeInBytes];
+            Array.Copy(rawData, header, HeaderSizeInBytes);
+
             if (header[0x52] != 0x01 || header[0x53] != 0x00)
             {
                 throw new Exception("The file does not appear to be a DiskCopy 4.2 image.");
@@ -37,12 +56,13 @@ namespace Convert2Dsk
                 throw new Exception($"The file is an unsupported image size.");
             }
 
-            byte[] imageData = binaryReader.ReadBytes((int)dataSize);
+            byte[] data = new byte[dataSize];
+            Array.Copy(rawData, HeaderSizeInBytes, data, 0, dataSize);
 
             return new DiskCopyImage()
             {
                 Header = header,
-                ImageData = imageData,
+                Data = data,
             };
         }
 
