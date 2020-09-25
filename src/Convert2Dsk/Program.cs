@@ -157,29 +157,10 @@ namespace Convert2Dsk
                 Logger.Write($"Converting \"{filePath}\"...");
 
                 using FileStream inputFileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
-                using BinaryReader binaryReader = new BinaryReader(inputFileStream);
 
-                // ensure the file is at least 400K, and has the DiskCopy 4.2 magic bytes
-                if (inputFileStream.Length < 400 * 1024)
-                {
-                    throw new Exception($"The file is too small to be a DiskCopy 4.2 image.");
-                }
+                // Try to read file as a DC42 image
+                DiskCopyImage diskCopyImage = DiskCopyImage.ReadFrom(inputFileStream);
 
-                byte[] bytes = binaryReader.ReadBytes(0x54);
-                if (bytes[0x52] != 0x01 || bytes[0x53] != 0x00)
-                {
-                    throw new Exception($"The file does not appear to be a DiskCopy 4.2 image.");
-                }
-
-                // ensure the embedded data size is 400, 800, or 1440 K
-                uint dataSize = (uint)(bytes[0x40] * 16777216 + bytes[0x41] * 65536 + bytes[0x42] * 256 + bytes[0x43]);
-                if (dataSize != 400 * 1024 && dataSize != 800 * 1024 && dataSize != 1440 * 1024)
-                {
-                    throw new Exception($"The file is an unsupported image size.");
-                }
-
-                // get the embedded image data, and write it out as a new file with a .dsk extension
-                byte[] imageData = binaryReader.ReadBytes((int)dataSize);
                 string outputFilePath = $"{Path.GetFullPath(filePath)}.dsk";
 
                 if (File.Exists(outputFilePath))
@@ -190,7 +171,7 @@ namespace Convert2Dsk
                 using FileStream outputFileStream = new FileStream(outputFilePath, FileMode.Create, FileAccess.Write, FileShare.ReadWrite);
                 using BinaryWriter binaryWriter = new BinaryWriter(outputFileStream);
 
-                binaryWriter.Write(imageData);
+                binaryWriter.Write(diskCopyImage.ImageData);
                 binaryWriter.Flush();
 
                 Logger.WriteLine($" success!");
