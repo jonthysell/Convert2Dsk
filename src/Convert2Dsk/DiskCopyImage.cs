@@ -35,27 +35,32 @@ namespace Convert2Dsk
                 throw new ArgumentNullException(nameof(rawData));
             }
 
-            // ensure the file is at least 400K, and has the DiskCopy 4.2 magic bytes
+            // Adapted from https://www.bigmessowires.com/2013/12/16/macintosh-diskcopy-4-2-floppy-image-converter/
+
+            // Ensure the file is at least 400K, and has the DiskCopy 4.2 magic bytes
             if (rawData.Length < 400 * 1024)
             {
-                throw new Exception("The file is too small to be a DiskCopy 4.2 image.");
+                throw new Exception("The input is too small to be a DiskCopy 4.2 image.");
             }
+
+            // Process header
 
             byte[] header = new byte[HeaderSizeInBytes];
             Array.Copy(rawData, header, HeaderSizeInBytes);
 
             if (header[0x52] != 0x01 || header[0x53] != 0x00)
             {
-                throw new Exception("The file does not appear to be a DiskCopy 4.2 image.");
+                throw new Exception("The input does not appear to have a DiskCopy 4.2 header.");
             }
 
-            // ensure the embedded data size is 400, 800, or 1440 K
+            // Ensure the embedded data size is 400, 800, or 1440 K
             uint dataSize = (uint)(header[0x40] * 16777216 + header[0x41] * 65536 + header[0x42] * 256 + header[0x43]);
             if (dataSize != 400 * 1024 && dataSize != 800 * 1024 && dataSize != 1440 * 1024)
             {
-                throw new Exception($"The file is an unsupported image size.");
+                throw new Exception($"The input has an unsupported data size.");
             }
 
+            // Extract embedded data
             byte[] data = new byte[dataSize];
             Array.Copy(rawData, HeaderSizeInBytes, data, 0, dataSize);
 

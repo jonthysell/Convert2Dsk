@@ -33,7 +33,7 @@ namespace Convert2Dsk.Test
             {
                 using FileStream inputFileStream = new FileStream(InputFilePath, FileMode.Open, FileAccess.Read);
 
-                byte[] binhexBytes = BinHexFile.ReadFrom(inputFileStream).Data;
+                byte[] binhexBytes = BinHexFile.ReadFrom(inputFileStream).DataFork;
 
                 byte[] actualOutputBytes = DiskCopyImage.ReadFrom(binhexBytes).Data;
 

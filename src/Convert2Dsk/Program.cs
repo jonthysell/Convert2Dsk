@@ -95,11 +95,11 @@ namespace Convert2Dsk
                     return;
                 }
 
-                Logger.VerboseWriteLine("Searching for potential files...");
+                Logger.VerboseWriteLine("Searching for image files...");
 
                 var filePaths = FindAllUniqueFilePaths(ProgramArgs.Paths);
 
-                Logger.VerboseWriteLine($"Found {filePaths.Count} potential file(s).");
+                Logger.VerboseWriteLine($"Found {filePaths.Count} image file(s).");
 
                 if (filePaths.Count > 0)
                 {
@@ -134,9 +134,12 @@ namespace Convert2Dsk
                 }
                 else if (Directory.Exists(originalPath))
                 {
-                    foreach (var filePath in Directory.EnumerateFiles(originalPath, "*", SearchOption.AllDirectories))
+                    foreach (string extension in SupportedExtensions)
                     {
-                        resultPaths.Add(filePath);
+                        foreach (var filePath in Directory.EnumerateFiles(originalPath, $"*.{extension}", SearchOption.AllDirectories))
+                        {
+                            resultPaths.Add(filePath);
+                        }
                     }
                 }
                 else
@@ -152,14 +155,28 @@ namespace Convert2Dsk
         {
             try
             {
-                // Adapted from https://www.bigmessowires.com/2013/12/16/macintosh-diskcopy-4-2-floppy-image-converter/
-
                 Logger.Write($"Converting \"{filePath}\"...");
 
-                using FileStream inputFileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+                string ext = Path.GetExtension(filePath).ToLower();
 
-                // Try to read file as a DC42 image
-                DiskCopyImage diskCopyImage = DiskCopyImage.ReadFrom(inputFileStream);
+                byte[] rawDskData = null;
+
+                if (ext == ".hqx")
+                {
+                    // Decode BinHex
+                    using FileStream inputFileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+                    rawDskData = DiskCopyImage.ReadFrom(BinHexFile.ReadFrom(inputFileStream).DataFork).Data;
+                }
+                else if (ext == ".img" || ext == ".image")
+                {
+                    // DC42 image
+                    using FileStream inputFileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+                    rawDskData = DiskCopyImage.ReadFrom(inputFileStream).Data;
+                }
+                else
+                {
+                    throw new Exception($"Unable to determine file format from extension \"{ext}\".");
+                }
 
                 string outputFilePath = $"{Path.GetFullPath(filePath)}.dsk";
 
@@ -171,7 +188,7 @@ namespace Convert2Dsk
                 using FileStream outputFileStream = new FileStream(outputFilePath, FileMode.Create, FileAccess.Write, FileShare.ReadWrite);
                 using BinaryWriter binaryWriter = new BinaryWriter(outputFileStream);
 
-                binaryWriter.Write(diskCopyImage.Data);
+                binaryWriter.Write(rawDskData);
                 binaryWriter.Flush();
 
                 Logger.WriteLine($" success!");
@@ -182,6 +199,8 @@ namespace Convert2Dsk
                 PrintException(ex);
             }
         }
+
+        private static readonly string[] SupportedExtensions = { "img", "image", "hqx" };
 
         #region Version
 
@@ -201,6 +220,11 @@ namespace Convert2Dsk
             Logger.WriteLine();
 
             Logger.WriteLine("Paths can be files or directories of files.");
+            Logger.WriteLine();
+
+            Logger.WriteLine("Supports:");
+            Logger.WriteLine("DiskCopy 4.2 images: .img, .image");
+            Logger.WriteLine("DiskCopy 4.2 images (encoded with BinHex 4.0): .hqx");
             Logger.WriteLine();
 
             Logger.WriteLine("Options:");
