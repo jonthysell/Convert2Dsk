@@ -9,14 +9,17 @@ namespace Convert2Dsk
 
         public string FileType { get; protected set; }
 
-        public string Creator { get; protected set; }
+        public string FileCreator { get; protected set; }
 
-        public ushort Flag { get; protected set; }
+        public ushort FinderFlags { get; protected set; }
 
         public byte[] DataFork { get; protected set; }
 
         public byte[] ResourceFork { get; protected set; }
 
         protected MacFile() { }
+
+        public const int FileTypeLength = 4;
+        public const int FileCreatorLength = 4;
     }
 }

@@ -28,41 +28,36 @@ namespace Convert2Dsk
             return ReadFrom(rawData);
         }
 
-        public static DiskCopyImage ReadFrom(byte[] rawData)
+        public static DiskCopyImage ReadFrom(byte[] dataFork)
         {
-            if (null == rawData)
+            if (null == dataFork)
             {
-                throw new ArgumentNullException(nameof(rawData));
+                throw new ArgumentNullException(nameof(dataFork));
             }
 
-            // Adapted from https://www.bigmessowires.com/2013/12/16/macintosh-diskcopy-4-2-floppy-image-converter/
-
-            // Ensure the file is at least 400K, and has the DiskCopy 4.2 magic bytes
-            if (rawData.Length < 400 * 1024)
-            {
-                throw new Exception("The input is too small to be a DiskCopy 4.2 image.");
-            }
+            // Based on: https://www.bigmessowires.com/2013/12/16/macintosh-diskcopy-4-2-floppy-image-converter/
 
             // Process header
 
-            byte[] header = new byte[HeaderSizeInBytes];
-            Array.Copy(rawData, header, HeaderSizeInBytes);
+            byte[] header = new byte[HeaderLength];
+            Array.Copy(dataFork, header, HeaderLength);
 
-            if (header[0x52] != 0x01 || header[0x53] != 0x00)
+            if (header[0x52] != 0x01)
             {
-                throw new Exception("The input does not appear to have a DiskCopy 4.2 header.");
+                throw new Exception("The input does not appear to have a DiskCopy 4.2 header. Missing one byte at offset 0x52.");
             }
 
-            // Ensure the embedded data size is 400, 800, or 1440 K
-            uint dataSize = (uint)(header[0x40] * 16777216 + header[0x41] * 65536 + header[0x42] * 256 + header[0x43]);
-            if (dataSize != 400 * 1024 && dataSize != 800 * 1024 && dataSize != 1440 * 1024)
+            if (header[0x53] != 0x00)
             {
-                throw new Exception($"The input has an unsupported data size.");
+                throw new Exception("The input does not appear to have a DiskCopy 4.2 header. Missing zero byte at offset 0x53.");
             }
+
+            int dataLength = ByteListExtensions.ReadInt32(header, DataLengthOffset);
 
             // Extract embedded data
-            byte[] data = new byte[dataSize];
-            Array.Copy(rawData, HeaderSizeInBytes, data, 0, dataSize);
+
+            byte[] data = new byte[dataLength];
+            Array.Copy(dataFork, HeaderLength, data, 0, dataLength);
 
             return new DiskCopyImage()
             {
@@ -71,6 +66,8 @@ namespace Convert2Dsk
             };
         }
 
-        public const int HeaderSizeInBytes = 0x54;
+        public const int HeaderLength = 0x54;
+
+        public const int DataLengthOffset = 0x40;
     }
 }

@@ -167,6 +167,12 @@ namespace Convert2Dsk
                     using FileStream inputFileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
                     rawDskData = DiskCopyImage.ReadFrom(BinHexFile.ReadFrom(inputFileStream).DataFork).Data;
                 }
+                else if (ext == ".bin" || ext == ".macbin")
+                {
+                    // Decode MacBinary
+                    using FileStream inputFileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+                    rawDskData = DiskCopyImage.ReadFrom(MacBinaryFile.ReadFrom(inputFileStream).DataFork).Data;
+                }
                 else if (ext == ".img" || ext == ".image")
                 {
                     // DC42 image
@@ -200,7 +206,7 @@ namespace Convert2Dsk
             }
         }
 
-        private static readonly string[] SupportedExtensions = { "img", "image", "hqx" };
+        private static readonly string[] SupportedExtensions = { "img", "image", "hqx", "bin", "macbin" };
 
         #region Version
 
@@ -225,6 +231,7 @@ namespace Convert2Dsk
             Logger.WriteLine("Supports:");
             Logger.WriteLine("DiskCopy 4.2 images: .img, .image");
             Logger.WriteLine("DiskCopy 4.2 images (encoded with BinHex 4.0): .hqx");
+            Logger.WriteLine("DiskCopy 4.2 images (encoded with MacBinary II): .bin, .macbin");
             Logger.WriteLine();
 
             Logger.WriteLine("Options:");

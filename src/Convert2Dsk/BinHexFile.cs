@@ -44,7 +44,7 @@ namespace Convert2Dsk
 
             if (startColonIndex < 0)
             {
-                throw new Exception("The input does not have a starting colon.");
+                throw new Exception("The input does not appear to have a MacBinary header. The input does not have a starting colon.");
             }
 
             // Look for end of the encoeded character data
@@ -148,16 +148,11 @@ namespace Convert2Dsk
 
             int index = 0;
 
-            byte filenameLength = uncompressedBytes[index];
-
+            byte fileNameLength = uncompressedBytes[index];
             index++;
 
-            string fileName = "";
-            for (int i = 0; i < filenameLength; i++)
-            {
-                fileName += (char)uncompressedBytes[index + i];
-            }
-            index += filenameLength;
+            string fileName = uncompressedBytes.ReadString(index, fileNameLength);
+            index += fileNameLength;
 
             if (uncompressedBytes[index] != 0x00)
             {
@@ -165,52 +160,44 @@ namespace Convert2Dsk
             }
             index++;
 
-            string fileType = "";
-            for (int i = 0; i < 4; i++)
-            {
-                fileType += (char)uncompressedBytes[index + i];
-            }
-            index += 4;
+            string fileType = uncompressedBytes.ReadString(index, FileTypeLength);
+            index += FileTypeLength;
 
-            string creator = "";
-            for (int i = 0; i < 4; i++)
-            {
-                creator += (char)uncompressedBytes[index + i];
-            }
-            index += 4;
+            string fileCreator = uncompressedBytes.ReadString(index, FileCreatorLength);
+            index += FileCreatorLength;
 
-            ushort flag = (ushort)((uncompressedBytes[index] << 8) | uncompressedBytes[index + 1]);
+            ushort finderFlags = uncompressedBytes.ReadUInt16(index);
             index += 2;
 
-            uint dataForkLength = (uint)((uncompressedBytes[index] << 24) | (uncompressedBytes[index + 1] << 16) | (uncompressedBytes[index + 2] << 8) | uncompressedBytes[index+3]);
+            int dataForkLength = uncompressedBytes.ReadInt32(index);
             index += 4;
 
-            uint resourceForkLength = (uint)((uncompressedBytes[index] << 24) | (uncompressedBytes[index + 1] << 16) | (uncompressedBytes[index + 2] << 8) | uncompressedBytes[index + 3]);
+            int resourceForkLength = uncompressedBytes.ReadInt32(index);
             index += 4;
 
-            ushort headerCRC = (ushort)((uncompressedBytes[index] << 8) | uncompressedBytes[index + 1]);
+            ushort headerCRC = uncompressedBytes.ReadUInt16(index);
             index += 2;
 
             byte[] dataFork = new byte[dataForkLength];
             Array.Copy(uncompressedBytes.ToArray(), index, dataFork, 0, dataForkLength);
-            index += (int)dataForkLength;
+            index += dataForkLength;
 
-            ushort dataCRC = (ushort)((uncompressedBytes[index] << 8) | uncompressedBytes[index + 1]);
+            ushort dataCRC = uncompressedBytes.ReadUInt16(index);
             index += 2;
 
             byte[] resourceFork = new byte[resourceForkLength];
             Array.Copy(uncompressedBytes.ToArray(), index, resourceFork, 0, resourceForkLength);
-            index += (int)resourceForkLength;
+            index += resourceForkLength;
 
-            ushort resourceCRC = (ushort)((uncompressedBytes[index] << 8) | uncompressedBytes[index + 1]);
+            ushort resourceCRC = uncompressedBytes.ReadUInt16(index);
             index += 2;
 
             return new BinHexFile()
             {
                 FileName = fileName,
                 FileType = fileType,
-                Creator = creator,
-                Flag = flag,
+                FileCreator = fileCreator,
+                FinderFlags = finderFlags,
                 HeaderCRC = headerCRC,
                 DataFork = dataFork,
                 DataCRC = dataCRC,
