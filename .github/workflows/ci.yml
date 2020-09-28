@@ -3,6 +3,7 @@ name: CI Build
 env:
   BuildDir: ./bld
   ScriptDir: ./scripts
+  SrcDir: ./src
   Product: Convert2Dsk
 
 on:
@@ -33,6 +34,9 @@ jobs:
     - name: Build ${{ matrix.target }}
       run: ${{ env.ScriptDir }}/Build${{ matrix.target }}.ps1
 
+    - name: Run Tests
+      run: dotnet test ${{ env.SrcDir }}
+
     - name: Upload Build Artifacts
       uses: actions/upload-artifact@v2
       with:
@@ -57,6 +61,9 @@ jobs:
     - name: Build ${{ matrix.target }}
       run: ${{ env.ScriptDir }}/Build${{ matrix.target }}.ps1
 
+    - name: Run Tests
+      run: dotnet test ${{ env.SrcDir }}
+
     - name: Upload Build Artifacts
       uses: actions/upload-artifact@v2
       with:
@@ -80,6 +87,9 @@ jobs:
 
     - name: Build ${{ matrix.target }}
       run: ${{ env.ScriptDir }}/Build${{ matrix.target }}.ps1
+
+    - name: Run Tests
+      run: dotnet test ${{ env.SrcDir }}
 
     - name: Upload Build Artifacts
       uses: actions/upload-artifact@v2
