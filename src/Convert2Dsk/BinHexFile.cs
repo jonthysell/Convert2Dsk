@@ -35,7 +35,7 @@ namespace Convert2Dsk
             int headerIndex = inputText.IndexOf(BinHexHeader);
             if (headerIndex < 0)
             {
-                throw new Exception("The input does not have a BinHex 4.0 header.");
+                throw new Exception("The input text does not have a BinHex 4.0 header.");
             }
 
             // Look for start of the encoeded character data
@@ -44,7 +44,7 @@ namespace Convert2Dsk
 
             if (startColonIndex < 0)
             {
-                throw new Exception("The input does not appear to have a MacBinary header. The input does not have a starting colon.");
+                throw new Exception("The input text does not appear to be BinHex 4.0. Missing the starting colon.");
             }
 
             // Look for end of the encoeded character data
@@ -53,7 +53,7 @@ namespace Convert2Dsk
 
             if (endColonIndex < 0)
             {
-                throw new Exception("The input does not have an ending colon.");
+                throw new Exception("The input text does not appear to be BinHex 4.0. Missing the ending colon.");
             }
 
             // Extract the encoeded character data
@@ -80,7 +80,7 @@ namespace Convert2Dsk
                 int charValue = BinHexCharMap.IndexOf(encodedText[i]);
                 if (charValue < 0)
                 {
-                    throw new Exception($"The input contains invalid character {encodedText[i]} at index {i}");
+                    throw new Exception($"The input text does not appear to be BinHex 4.0. Contains invalid character {encodedText[i]} at offset 0x{i:X}.");
                 }
 
                 if (charCount == 0)
@@ -156,7 +156,7 @@ namespace Convert2Dsk
 
             if (uncompressedBytes[index] != 0x00)
             {
-                throw new Exception("The input does not appear to have a BinHex 4.0 header.");
+                throw new Exception($"The uncompressed input data does not appear to have a BinHex 4.0 header. Missing zero byte at offset 0x{index:X}.");
             }
             index++;
 
@@ -207,7 +207,9 @@ namespace Convert2Dsk
         }
 
         public static readonly string BinHexHeader = "(This file must be converted with BinHex 4.0)";
+
         public static readonly string BinHexCharMap = @"!""#$%&'()*+,-012345689@ABCDEFGHIJKLMNPQRSTUVXYZ[`abcdefhijklmpqr";
+
         public const byte RLEFlag = 0x90;
     }
 }
