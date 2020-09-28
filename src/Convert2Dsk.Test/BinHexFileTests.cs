@@ -25,6 +25,13 @@ namespace Convert2Dsk.Test
             testCase.ExecuteTest();
         }
 
+        [TestMethod]
+        public void BinHexFile_Blank400KTest()
+        {
+            var testCase = new BinHexFileTestCase("Blank400K.img.hqx", "Blank400K.dsk");
+            testCase.ExecuteTest();
+        }
+
         public class BinHexFileTestCase : FileTestCase
         {
             public BinHexFileTestCase(string inputFilePath, string expectedOutputFilePath) : base(inputFilePath, expectedOutputFilePath) { }

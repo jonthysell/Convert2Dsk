@@ -25,6 +25,13 @@ namespace Convert2Dsk.Test
             testCase.ExecuteTest();
         }
 
+        [TestMethod]
+        public void DiskCopyImage_Blank400KTest()
+        {
+            var testCase = new DiskCopyImageTestCase("Blank400K.img", "Blank400K.dsk");
+            testCase.ExecuteTest();
+        }
+
         public class DiskCopyImageTestCase : FileTestCase
         {
             public DiskCopyImageTestCase(string inputFilePath, string expectedOutputFilePath) : base(inputFilePath, expectedOutputFilePath) { }
