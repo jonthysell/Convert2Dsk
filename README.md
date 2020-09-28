@@ -41,6 +41,11 @@ Usage: convert2dsk [--version] [--help]
 
 Paths can be files or directories of files.
 
+Supports:
+DiskCopy 4.2 images: .img, .image
+DiskCopy 4.2 images (encoded with BinHex 4.0): .hqx
+DiskCopy 4.2 images (encoded with MacBinary II): .bin, .macbin
+
 Options:
 -v, --verbose  Show verbose output
 ```
