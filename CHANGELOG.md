@@ -10,5 +10,5 @@
 ## v1.0 ##
 
 * First release
-* Based almost entirely on [BMOW'sDiskCopy2DSK](https://www.bigmessowires.com/2013/12/16/macintosh-diskcopy-4-2-floppy-image-converter/)
+* Based almost entirely on [BMOW's DiskCopy2DSK](https://www.bigmessowires.com/2013/12/16/macintosh-diskcopy-4-2-floppy-image-converter/)
 * Only accepts 400K, 800K, and 1.4MB Disk Copy 4.2 images
