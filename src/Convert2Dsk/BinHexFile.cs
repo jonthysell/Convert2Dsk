@@ -7,27 +7,15 @@ using System.IO;
 
 namespace Convert2Dsk
 {
-    public class BinHexFile
+    public class BinHexFile : MacFile
     {
-        public string FileName { get; protected set; }
-
-        public string FileType { get; protected set; }
-
-        public string Creator { get; protected set; }
-
-        public ushort Flag { get; protected set; }
-
         public ushort HeaderCRC { get; protected set; }
-
-        public byte[] DataFork { get; protected set; }
 
         public ushort DataCRC { get; protected set; }
 
-        public byte[] ResourceFork { get; protected set; }
-
         public ushort ResourceCRC { get; protected set; }
 
-        protected BinHexFile() { }
+        protected BinHexFile() : base() { }
 
         public static BinHexFile ReadFrom(Stream inputStream)
         {
