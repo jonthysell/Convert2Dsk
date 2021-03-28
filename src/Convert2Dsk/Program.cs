@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2020 Jon Thysell <http://jonthysell.com>
+﻿// Copyright (c) Jon Thysell <http://jonthysell.com>
 // Licensed under the MIT License.
 
 using System;

@@ -3,7 +3,7 @@
     <Product>Convert2Dsk</Product>
     <Company>Jon Thysell</Company>
     <Authors>Jon Thysell</Authors>
-    <Copyright>Copyright © 2020 Jon Thysell</Copyright>
+    <Copyright>Copyright © 2020-2021 Jon Thysell</Copyright>
     <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
     <RepositoryUrl>https://github.com/jonthysell/Convert2Dsk</RepositoryUrl>
     <Version>1.2.0</Version>
