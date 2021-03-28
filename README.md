@@ -1,6 +1,6 @@
 # Convert2Dsk #
 
-![CI Build](https://github.com/jonthysell/Convert2Dsk/workflows/CI%20Build/badge.svg)
+[![CI Build](https://github.com/jonthysell/Convert2Dsk/actions/workflows/ci.yml/badge.svg)](https://github.com/jonthysell/Convert2Dsk/actions/workflows/ci.yml)
 
 Convert2Dsk is an application for converting Disk Copy 4.2 images into raw disk images.
 
