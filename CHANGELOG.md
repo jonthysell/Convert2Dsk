@@ -1,6 +1,6 @@
 # Convert2Dsk ChangeLog #
 
-## next ##
+## v1.2 ##
 
 * Upgrade to .NET 5.0
 
