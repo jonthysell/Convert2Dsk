@@ -1,5 +1,9 @@
 # Convert2Dsk ChangeLog #
 
+## next ##
+
+* Upgrade to .NET 5.0
+
 ## v1.1 ##
 
 * Supports any size Disk Copy 4.2 image

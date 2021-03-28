@@ -4,7 +4,7 @@
 
 Convert2Dsk is an application for converting Disk Copy 4.2 images into raw disk images.
 
-Convert2Dsk was written in C# and should run anywhere that supports [.NET Core 3.1](https://github.com/dotnet/core/blob/master/release-notes/3.1/3.1-supported-os.md). It has been officially tested on:
+Convert2Dsk was written in C# and should run anywhere that supports [.NET 5.0](https://github.com/dotnet/core/blob/master/release-notes/5.0/5.0-supported-os.md). It has been officially tested on:
 
 * Windows 10
 * Ubuntu 20.04
@@ -54,4 +54,4 @@ Options:
 
 Convert2Dsk is open-source under the MIT license.
 
-Convert2Dsk Copyright (c) 2020 Jon Thysell
+Convert2Dsk Copyright (c) 2020-2021 Jon Thysell
