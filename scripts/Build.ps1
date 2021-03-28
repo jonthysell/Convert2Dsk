@@ -23,7 +23,7 @@ Write-Host "Build release..."
 
 try
 {
-    dotnet msbuild $BuildArgs.Split() -restore -p:Configuration=Release -p:PublishDir="$RepoRoot\$OutputRoot\$TargetOutputDirectory" "$SolutionPath"
+    dotnet msbuild $BuildArgs.Split() -restore -p:Configuration=Release -p:TrimMode=link -p:PublishDir="$RepoRoot\$OutputRoot\$TargetOutputDirectory" "$SolutionPath"
     if (!$?) {
     	throw 'Build failed!'
     }
