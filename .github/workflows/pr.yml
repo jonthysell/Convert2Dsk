@@ -35,4 +35,4 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name:  ${{ matrix.configuration }}Binaries
-        path: ${{ env.BinDir }}/${{ matrix.configuration }}/netcoreapp3.1
+        path: ${{ env.BinDir }}/${{ matrix.configuration }}/net5.0
